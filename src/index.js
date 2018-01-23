@@ -24,11 +24,12 @@ function truncateByWord(element, maximumHeight) {
   while (++i < length) {
     newInnerHTML += chunks[i];
     element.innerHTML = newInnerHTML;
+    let elementHeight = parseInt(window.getComputedStyle(element).height, 10);
 
     // If the new height now exceeds the `maximumHeight` (where it did not
     // in the previous iteration), we know that we are at most one line
     // over the optimal text length.
-    if (element.offsetHeight > maximumHeight) {
+    if (elementHeight > maximumHeight) {
       return true;
     }
   }
@@ -46,7 +47,8 @@ function truncateByCharacter(element, maximumHeight, ellipsisCharacter) {
   // off any trailing punctuation before appending the `ellipsisCharacter`.
   while (length > 0) {
     element.innerHTML = innerHTML.substring(0, length).replace(TRAILING_WHITESPACE_REGEX, '') + ellipsisCharacter;
-    if (element.offsetHeight <= maximumHeight) {
+    let elementHeight = parseInt(window.getComputedStyle(element).height, 10);
+    if (elementHeight <= maximumHeight) {
       return;
     }
     length--;
@@ -59,9 +61,10 @@ export default function(element, { lineCount, ellipsisCharacter } = {}) {
   // `element` required to fit the given `lineCount`.
   const lineHeight = parseInt(window.getComputedStyle(element).lineHeight, 10);
   const maximumHeight = lineCount * lineHeight;
+  const elementHeight = parseInt(window.getComputedStyle(element).height, 10);
 
   // Exit if text does not overflow the `element`.
-  if (element.scrollHeight <= maximumHeight) {
+  if (elementHeight <= maximumHeight) {
     return;
   }
 
